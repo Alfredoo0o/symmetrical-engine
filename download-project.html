@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar Proyecto Shopper Earnings</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+        .download-btn {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 1rem 0;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .download-btn:hover {
+            background: #1d4ed8;
+        }
+        .file-list {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .file-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .instructions {
+            background: #fef3c7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Shopper Earnings - Descarga del Proyecto</h1>
+        
+        <p>Haz clic en el botón de abajo para descargar todos los archivos del proyecto en un archivo ZIP.</p>
+        
+        <button class="download-btn" onclick="downloadProject()">
+            📦 Descargar Proyecto Completo (.zip)
+        </button>
+        
+        <div class="instructions">
+            <h3>📋 Instrucciones después de la descarga:</h3>
+            <ol>
+                <li>Extrae el archivo ZIP en tu computadora</li>
+                <li>Configura Firebase siguiendo las instrucciones del README.md</li>
+                <li>Actualiza las credenciales en <code>firebase-config.js</code></li>
+                <li>Sube los archivos a GitHub Pages o tu hosting preferido</li>
+            </ol>
+        </div>
+        
+        <div class="file-list">
+            <h3>📁 Archivos incluidos:</h3>
+            <div class="file-item">📄 index.html - Página de login</div>
+            <div class="file-item">📄 app.html - Aplicación principal</div>
+            <div class="file-item">🎨 styles.css - Estilos CSS</div>
+            <div class="file-item">🔧 firebase-config.js - Configuración Firebase</div>
+            <div class="file-item">🔐 auth.js - Lógica de autenticación</div>
+            <div class="file-item">⚙️ app.js - Lógica principal</div>
+            <div class="file-item">📖 README.md - Documentación completa</div>
+            <div class="file-item">🚫 .gitignore - Archivos a ignorar en Git</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        async function downloadProject() {
+            const zip = new JSZip();
+            
+            // Archivos del proyecto con su contenido
+            const files = {
+                'index.html': `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopper Earnings - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-icon">🛒</div>
+                <h1>Shopper Earnings</h1>
+                <p>Gestiona tus pedidos y ganancias</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab">Iniciar Sesión</button>
+                <button class="auth-tab" id="registerTab">Registrarse</button>
+            </div>
+            
+            <form id="authForm" class="auth-form">
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Correo electrónico" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Contraseña" required>
+                </div>
+                <div class="form-group" id="confirmPasswordGroup" style="display: none;">
+                    <input type="password" id="confirmPassword" placeholder="Confirmar contraseña">
+                </div>
+                <button type="submit" class="btn-primary" id="authButton">
+                    <span class="btn-text">Iniciar Sesión</span>
+                    <div class="loading-spinner" style="display: none;"></div>
+                </button>
+            </form>
+            
+            <div class="auth-message" id="authMessage"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>`,
+
+                'app.html': `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopper Earnings - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-page">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo-small">🛒</div>
+                <h1>Shopper Earnings</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-email" id="userEmail"></span>
+                <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tab-navigation">
+        <button class="tab-btn active" data-tab="orders">
+            <span class="tab-icon">📝</span>
+            <span class="tab-text">Pedidos</span>
+        </button>
+        <button class="tab-btn" data-tab="history">
+            <span class="tab-icon">📋</span>
+            <span class="tab-text">Historial</span>
+        </button>
+        <button class="tab-btn" data-tab="settings">
+            <span class="tab-icon">⚙️</span>
+            <span class="tab-text">Tarifas</span>
+        </button>
+        <button class="tab-btn" data-tab="summary">
+            <span class="tab-icon">📊</span>
+            <span class="tab-text">Resumen</span>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Tab 1: Registro de Pedidos -->
+        <section class="tab-content active" id="orders">
+            <div class="content-card">
+                <h2>Registrar Nuevo Pedido</h2>
+                <form id="orderForm" class="order-form">
+                    <div class="form-group">
+                        <label for="orderName">Nombre del Pedido</label>
+                        <input type="text" id="orderName" placeholder="Ej: Pedido Supermercado ABC" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tariffSelect">Tarifa Base</label>
+                        <select id="tariffSelect" required>
+                            <option value="">Seleccionar tarifa</option>
+                            <option value="tariff1">Tarifa 1</option>
+                            <option value="tariff2">Tarifa 2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="skuCount">Cantidad de SKUs</label>
+                            <input type="number" id="skuCount" min="0" step="1" value="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="kilometers">Kilómetros</label>
+                            <input type="number" id="kilometers" min="0" step="0.1" value="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="earnings-preview">
+                        <h3>Ganancia Calculada</h3>
+                        <div class="earnings-breakdown">
+                            <div class="breakdown-line">
+                                <span>Tarifa Base:</span>
+                                <span id="baseFeeDisplay">$0</span>
+                            </div>
+                            <div class="breakdown-line">
+                                <span>SKUs (<span id="skuCountDisplay">0</span> × <span id="skuValueDisplay">$0</span>):</span>
+                                <span id="skuTotalDisplay">$0</span>
+                            </div>
+                            <div class="breakdown-line">
+                                <span>Kilómetros (<span id="kmCountDisplay">0</span> × <span id="kmValueDisplay">$0</span>):</span>
+                                <span id="kmTotalDisplay">$0</span>
+                            </div>
+                            <div class="breakdown-total">
+                                <span>Total:</span>
+                                <span id="totalEarningsDisplay">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Guardar Pedido</span>
+                        <div class="loading-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 2: Historial de Pedidos -->
+        <section class="tab-content" id="history">
+            <div class="content-card">
+                <div class="history-header">
+                    <h2>Historial de Pedidos</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Buscar por nombre o fecha...">
+                        <button class="btn-clear" id="clearSearch">×</button>
+                    </div>
+                </div>
+                
+                <div class="orders-list" id="ordersList">
+                    <div class="no-orders">
+                        <p>No hay pedidos registrados aún</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 3: Configuración de Tarifas -->
+        <section class="tab-content" id="settings">
+            <div class="content-card">
+                <h2>Configuración de Tarifas</h2>
+                <form id="settingsForm" class="settings-form">
+                    <div class="tariff-section">
+                        <h3>Tarifas Base</h3>
+                        <div class="form-group">
+                            <label for="tariff1Name">Nombre Tarifa 1</label>
+                            <input type="text" id="tariff1Name" placeholder="Ej: Supermercado Local" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tariff1Value">Valor Tarifa 1 (CLP)</label>
+                            <input type="number" id="tariff1Value" min="0" step="100" placeholder="5000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tariff2Name">Nombre Tarifa 2</label>
+                            <input type="text" id="tariff2Name" placeholder="Ej: Supermercado Premium" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tariff2Value">Valor Tarifa 2 (CLP)</label>
+                            <input type="number" id="tariff2Value" min="0" step="100" placeholder="7000" required>
+                        </div>
+                    </div>
+                    
+                    <div class="additional-rates">
+                        <h3>Tarifas Adicionales</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="skuValue">Valor por SKU (CLP)</label>
+                                <input type="number" id="skuValue" min="0" step="10" placeholder="150" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kmValue">Valor por KM (CLP)</label>
+                                <input type="number" id="kmValue" min="0" step="10" placeholder="200" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Guardar Configuración</span>
+                        <div class="loading-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 4: Resumen de Ganancias -->
+        <section class="tab-content" id="summary">
+            <div class="content-card">
+                <h2>Resumen de Ganancias</h2>
+                
+                <div class="summary-filters">
+                    <div class="filter-group">
+                        <label for="dateFrom">Desde:</label>
+                        <input type="date" id="dateFrom">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateTo">Hasta:</label>
+                        <input type="date" id="dateTo">
+                    </div>
+                    <button class="btn-secondary" id="applyFilter">Filtrar</button>
+                    <button class="btn-secondary" id="clearFilter">Limpiar</button>
+                </div>
+                
+                <div class="summary-stats">
+                    <div class="stat-card">
+                        <h3>Total General</h3>
+                        <div class="stat-value" id="totalGeneral">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Promedio Semanal</h3>
+                        <div class="stat-value" id="weeklyAverage">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Pedidos</h3>
+                        <div class="stat-value" id="totalOrders">0</div>
+                    </div>
+                </div>
+                
+                <div class="weekly-breakdown" id="weeklyBreakdown">
+                    <h3>Desglose Semanal</h3>
+                    <div class="weeks-list" id="weeksList">
+                        <div class="no-data">
+                            <p>No hay datos para mostrar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Confirmar Acción</h3>
+            <p id="modalMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="modalCancel">Cancelar</button>
+                <button class="btn-danger" id="modalConfirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>`,
+
+                'firebase-config.js': `// Firebase configuration
+const firebaseConfig = {
+    // Reemplaza con tu configuración de Firebase
+    apiKey: "your-api-key",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "your-app-id"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Initialize Firebase services
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Export for use in other files
+window.auth = auth;
+window.db = db;
+
+console.log('Firebase initialized successfully');`,
+
+                '.gitignore': `# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production builds
+/dist
+/build
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary folders
+tmp/
+temp/`
+            };
+
+            // Agregar archivos CSS y JS (contenido muy largo, se trunca para el ejemplo)
+            files['styles.css'] = await fetch('/styles.css').then(r => r.text()).catch(() => '/* CSS content */');
+            files['auth.js'] = await fetch('/auth.js').then(r => r.text()).catch(() => '/* Auth JS content */');
+            files['app.js'] = await fetch('/app.js').then(r => r.text()).catch(() => '/* App JS content */');
+            files['README.md'] = await fetch('/README.md').then(r => r.text()).catch(() => '/* README content */');
+
+            // Agregar archivos al ZIP
+            Object.entries(files).forEach(([filename, content]) => {
+                zip.file(filename, content);
+            });
+
+            // Generar y descargar el ZIP
+            const content = await zip.generateAsync({type: "blob"});
+            const url = window.URL.createObjectURL(content);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'shopper-earnings-app.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>`,
+
+                'package.json': `{
+  "name": "shopper-earnings-app",
+  "version": "1.0.0",
+  "description": "Aplicación web para gestionar pedidos y ganancias como shopper",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": ["shopper", "earnings", "pedidos", "ganancias", "firebase"],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/shopper-earnings-app.git"
+  }
+}`
+            };
+
+            // Agregar todos los archivos al ZIP
+            Object.entries(files).forEach(([filename, content]) => {
+                zip.file(filename, content);
+            });
+
+            try {
+                // Generar el ZIP
+                const content = await zip.generateAsync({
+                    type: "blob",
+                    compression: "DEFLATE",
+                    compressionOptions: {
+                        level: 6
+                    }
+                });
+                
+                // Crear enlace de descarga
+                const url = window.URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'shopper-earnings-app.zip';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Limpiar
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 100);
+                
+                alert('¡Descarga iniciada! El archivo ZIP contiene todos los archivos del proyecto.');
+                
+            } catch (error) {
+                console.error('Error al generar el ZIP:', error);
+                alert('Error al generar el archivo. Por favor, intenta nuevamente.');
+            }
+        }
+    </script>
+</body>
+</html>

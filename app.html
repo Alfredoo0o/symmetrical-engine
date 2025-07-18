@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopper Earnings - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-page">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo-small">🛒</div>
+                <h1>Shopper Earnings</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-email" id="userEmail"></span>
+                <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tab-navigation">
+        <button class="tab-btn active" data-tab="orders">
+            <span class="tab-icon">📝</span>
+            <span class="tab-text">Pedidos</span>
+        </button>
+        <button class="tab-btn" data-tab="history">
+            <span class="tab-icon">📋</span>
+            <span class="tab-text">Historial</span>
+        </button>
+        <button class="tab-btn" data-tab="settings">
+            <span class="tab-icon">⚙️</span>
+            <span class="tab-text">Tarifas</span>
+        </button>
+        <button class="tab-btn" data-tab="summary">
+            <span class="tab-icon">📊</span>
+            <span class="tab-text">Resumen</span>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Tab 1: Registro de Pedidos -->
+        <section class="tab-content active" id="orders">
+            <div class="content-card">
+                <h2>Registrar Nuevo Pedido</h2>
+                <form id="orderForm" class="order-form">
+                    <div class="form-group">
+                        <label for="orderName">Nombre del Pedido</label>
+                        <input type="text" id="orderName" placeholder="Ej: Pedido Supermercado ABC" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tariffSelect">Tarifa Base</label>
+                        <select id="tariffSelect" required>
+                            <option value="">Seleccionar tarifa</option>
+                            <option value="tariff1">Tarifa 1</option>
+                            <option value="tariff2">Tarifa 2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="skuCount">Cantidad de SKUs</label>
+                            <input type="number" id="skuCount" min="0" step="1" value="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="kilometers">Kilómetros</label>
+                            <input type="number" id="kilometers" min="0" step="0.1" value="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="earnings-preview">
+                        <h3>Ganancia Calculada</h3>
+                        <div class="earnings-breakdown">
+                            <div class="breakdown-line">
+                                <span>Tarifa Base:</span>
+                                <span id="baseFeeDisplay">$0</span>
+                            </div>
+                            <div class="breakdown-line">
+                                <span>SKUs (<span id="skuCountDisplay">0</span> × <span id="skuValueDisplay">$0</span>):</span>
+                                <span id="skuTotalDisplay">$0</span>
+                            </div>
+                            <div class="breakdown-line">
+                                <span>Kilómetros (<span id="kmCountDisplay">0</span> × <span id="kmValueDisplay">$0</span>):</span>
+                                <span id="kmTotalDisplay">$0</span>
+                            </div>
+                            <div class="breakdown-total">
+                                <span>Total:</span>
+                                <span id="totalEarningsDisplay">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Guardar Pedido</span>
+                        <div class="loading-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 2: Historial de Pedidos -->
+        <section class="tab-content" id="history">
+            <div class="content-card">
+                <div class="history-header">
+                    <h2>Historial de Pedidos</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Buscar por nombre o fecha...">
+                        <button class="btn-clear" id="clearSearch">×</button>
+                    </div>
+                </div>
+                
+                <div class="orders-list" id="ordersList">
+                    <div class="no-orders">
+                        <p>No hay pedidos registrados aún</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 3: Configuración de Tarifas -->
+        <section class="tab-content" id="settings">
+            <div class="content-card">
+                <h2>Configuración de Tarifas</h2>
+                <form id="settingsForm" class="settings-form">
+                    <div class="tariff-section">
+                        <h3>Tarifas Base</h3>
+                        <div class="form-group">
+                            <label for="tariff1Name">Nombre Tarifa 1</label>
+                            <input type="text" id="tariff1Name" placeholder="Ej: Supermercado Local" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tariff1Value">Valor Tarifa 1 (CLP)</label>
+                            <input type="number" id="tariff1Value" min="0" step="100" placeholder="5000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tariff2Name">Nombre Tarifa 2</label>
+                            <input type="text" id="tariff2Name" placeholder="Ej: Supermercado Premium" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tariff2Value">Valor Tarifa 2 (CLP)</label>
+                            <input type="number" id="tariff2Value" min="0" step="100" placeholder="7000" required>
+                        </div>
+                    </div>
+                    
+                    <div class="additional-rates">
+                        <h3>Tarifas Adicionales</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="skuValue">Valor por SKU (CLP)</label>
+                                <input type="number" id="skuValue" min="0" step="10" placeholder="150" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kmValue">Valor por KM (CLP)</label>
+                                <input type="number" id="kmValue" min="0" step="10" placeholder="200" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Guardar Configuración</span>
+                        <div class="loading-spinner" style="display: none;"></div>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tab 4: Resumen de Ganancias -->
+        <section class="tab-content" id="summary">
+            <div class="content-card">
+                <h2>Resumen de Ganancias</h2>
+                
+                <!-- Week Navigation -->
+                <div class="week-navigation">
+                    <button class="btn-nav" id="prevWeek">
+                        <span class="nav-icon">←</span>
+                        <span class="nav-text">Semana Anterior</span>
+                    </button>
+                    <div class="week-selector">
+                        <input type="date" id="weekPicker" class="week-picker">
+                        <div class="week-display" id="weekDisplay">
+                            Semana del 15/01/2024 al 21/01/2024
+                        </div>
+                    </div>
+                    <button class="btn-nav" id="nextWeek">
+                        <span class="nav-text">Semana Siguiente</span>
+                        <span class="nav-icon">→</span>
+                    </button>
+                </div>
+                
+                <!-- Weekly Summary Cards -->
+                <div class="weekly-summary-cards">
+                    <div class="summary-card">
+                        <h3>Total Semana</h3>
+                        <div class="card-value" id="weeklyTotal">$0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Promedio Diario</h3>
+                        <div class="card-value" id="dailyAverage">$0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Total Pedidos</h3>
+                        <div class="card-value" id="weeklyOrders">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Mejor Día</h3>
+                        <div class="card-value" id="bestDay">-</div>
+                    </div>
+                </div>
+                
+                <!-- Daily Chart -->
+                <div class="chart-container">
+                    <h3>Gráfico de Ganancias Diarias</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="dailyChart" width="800" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Daily Breakdown Table -->
+                <div class="daily-breakdown">
+                    <h3>Desglose Diario Detallado</h3>
+                    <div class="daily-table-container">
+                        <table class="daily-table" id="dailyTable">
+                            <thead>
+                                <tr>
+                                    <th>Día</th>
+                                    <th>Fecha</th>
+                                    <th>Pedidos</th>
+                                    <th>Ganancia Total</th>
+                                    <th>Promedio por Pedido</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dailyTableBody">
+                                <tr class="no-data-row">
+                                    <td colspan="5">No hay datos para mostrar</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Monthly Overview -->
+                <div class="monthly-overview">
+                    <h3>Resumen Mensual</h3>
+                    <div class="monthly-stats">
+                        <div class="monthly-stat">
+                            <span class="stat-label">Total del Mes:</span>
+                            <span class="stat-value" id="monthlyTotal">$0</span>
+                        </div>
+                        <div class="monthly-stat">
+                            <span class="stat-label">Promedio Semanal:</span>
+                            <span class="stat-value" id="monthlyWeeklyAvg">$0</span>
+                        </div>
+                        <div class="monthly-stat">
+                            <span class="stat-label">Días Trabajados:</span>
+                            <span class="stat-value" id="workingDays">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Confirmar Acción</h3>
+            <p id="modalMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="modalCancel">Cancelar</button>
+                <button class="btn-danger" id="modalConfirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
