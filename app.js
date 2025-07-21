@@ -359,8 +359,8 @@ class ShopperApp {
             tariff1Value: parseFloat(document.getElementById('tariff1Value').value.replace(/\./g, '')) || 0,
             tariff2Name: document.getElementById('tariff2Name').value.trim(),
             tariff2Value: parseFloat(document.getElementById('tariff2Value').value.replace(/\./g, '')) || 0,
-            skuValue: parseInt(document.getElementById('skuValue').value) || 0,
-            kmValue: parseInt(document.getElementById('kmValue').value) || 0
+            skuValue: parseFloat(document.getElementById('skuValue').value.replace(/\./g, '')) || 0,
+             kmValue: parseFloat(document.getElementById('kmValue').value.replace(/\./g, '')) || 0
         };
         
         // Validation
