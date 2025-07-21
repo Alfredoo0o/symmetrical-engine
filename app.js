@@ -356,9 +356,9 @@ class ShopperApp {
         
         const newSettings = {
             tariff1Name: document.getElementById('tariff1Name').value.trim(),
-            tariff1Value: parseInt(document.getElementById('tariff1Value').value) || 0,
+            tariff1Value: parseFloat(document.getElementById('tariff1Value').value.replace(/\./g, '')) || 0,
             tariff2Name: document.getElementById('tariff2Name').value.trim(),
-            tariff2Value: parseInt(document.getElementById('tariff2Value').value) || 0,
+            tariff2Value: parseFloat(document.getElementById('tariff2Value').value.replace(/\./g, '')) || 0,
             skuValue: parseInt(document.getElementById('skuValue').value) || 0,
             kmValue: parseInt(document.getElementById('kmValue').value) || 0
         };
