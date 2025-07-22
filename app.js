@@ -213,8 +213,9 @@ class ShopperApp {
             if (ordersData) {
                 this.orders = JSON.parse(ordersData).map(order => ({
                     ...order,
-                    // MODIFICADO: Utiliza getLocalDateFromISO para asegurar la consistencia de la fecha
-                    createdAt: this.getLocalDateFromISO(order.createdAt) 
+                    // CAMBIO AQUÍ: Crea el objeto Date directamente desde la ISO string
+                    // Esto preserva la hora exacta en que se creó el pedido
+                    createdAt: new Date(order.createdAt) 
                 }));
             } else {
                 this.orders = []; // Asegura que el array esté vacío si no hay datos
@@ -286,7 +287,7 @@ class ShopperApp {
         // Asegurarse de que order.createdAt sea un objeto Date válido
         let displayDate = order.createdAt;
         if (!(displayDate instanceof Date) || isNaN(displayDate.getTime())) {
-            // Fallback si la fecha no es válida, aunque getLocalDateFromISO debería evitarlo
+            // Fallback si la fecha no es válida, aunque new Date() debería evitarlo ahora
             displayDate = new Date(); // Usa la fecha actual como fallback
         }
 
@@ -662,22 +663,21 @@ class ShopperApp {
     }
 
     // Utility Functions
-    // MODIFICADO: Nueva función para normalizar fechas al inicio del día
+    // Función para normalizar fechas al inicio del día (usado para comparaciones de día completo)
     normalizeDateToDayStart(date) {
         const d = new Date(date);
         d.setHours(0, 0, 0, 0); // Establece la hora a 00:00:00.000
         return d;
     }
 
-    // MODIFICADO: Nueva función para obtener un objeto Date local con la hora en 00:00:00
-    getLocalDateFromISO(isoString) {
-        const date = new Date(isoString);
-        // Crea un nuevo objeto Date usando el año, mes y día de la fecha local
-        // Esto asegura que la fecha represente el inicio del día local
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
+    // Ya no se usa getLocalDateFromISO directamente en loadUserData.
+    // Esta función ya no es necesaria con el cambio en loadUserData.
+    // getLocalDateFromISO(isoString) {
+    //     const date = new Date(isoString);
+    //     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    // }
 
-    // MODIFICADO: Helper function to check if two dates are the same day (using normalized dates)
+    // Helper function to check if two dates are the same day (using normalized dates)
     isSameDay(d1, d2) {
         const normalizedD1 = this.normalizeDateToDayStart(d1);
         const normalizedD2 = this.normalizeDateToDayStart(d2);
