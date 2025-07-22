@@ -688,6 +688,13 @@ class ShopperApp {
             button.disabled = false;
             spinner.style.display = 'none';
             text.style.opacity = '1';
+
+            // Nueva función para normalizar fechas al inicio del día
+normalizeDateToDayStart(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0); // Establece la hora a 00:00:00.000
+    return d;
+}
         }
     }
 
