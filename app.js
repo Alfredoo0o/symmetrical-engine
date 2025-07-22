@@ -17,6 +17,7 @@ class ShopperApp {
         this.initializeTabs();
         this.loadUserData();
         this.updateEarningsPreview();
+        this.initializeSummaryTab();
     }
 
     getDefaultSettings() {
