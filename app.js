@@ -15,7 +15,7 @@ class ShopperApp {
         this.checkAuthState();
         this.initializeEventListeners();
         this.initializeTabs();
-        this.loadUserData();
+        this.loadUserData(); // Carga inicial de datos al iniciar la app
         this.updateEarningsPreview();
         this.initializeSummaryTab(); // Asegurarse de que el resumen se inicialice al cargar la app
     }
@@ -92,11 +92,16 @@ class ShopperApp {
         });
         
         // Load specific tab data
-        if (tabName === 'history') {
+        if (tabName === 'orders') { // Si vuelves a la pestaña de pedidos, resetear el formulario y vista previa
+            this.resetOrderForm();
+            this.updateEarningsPreview();
+        } else if (tabName === 'history') {
+            this.loadUserData(); // Asegurarse de cargar los últimos datos antes de mostrar el historial
             this.displayOrders();
         } else if (tabName === 'summary') {
             this.initializeSummaryTab();
         }
+        // Para la pestaña 'settings' no es necesario una acción especial aquí si ya se inicializa al cargar.
     }
 
     // Order Management
@@ -211,6 +216,8 @@ class ShopperApp {
                     // MODIFICADO: Utiliza getLocalDateFromISO para asegurar la consistencia de la fecha
                     createdAt: this.getLocalDateFromISO(order.createdAt) 
                 }));
+            } else {
+                this.orders = []; // Asegura que el array esté vacío si no hay datos
             }
             
             // Load settings
@@ -225,6 +232,7 @@ class ShopperApp {
         } catch (error) {
             console.error('Error loading user data:', error);
             this.showToast('Error al cargar los datos', 'error');
+            this.orders = []; // En caso de error, asegura que el array esté vacío
         }
     }
 
@@ -249,13 +257,20 @@ class ShopperApp {
 
     displayOrders(ordersToShow = null) {
         const ordersList = document.getElementById('ordersList');
-        const orders = ordersToShow || this.orders;
+        // Si no se pasan pedidos específicos, usa el array principal de la app
+        const orders = ordersToShow || this.orders; 
         
+        if (!ordersList) { // Asegúrate de que el elemento exista antes de manipularlo
+            console.error('Elemento #ordersList no encontrado en el DOM.');
+            return;
+        }
+
         if (orders.length === 0) {
             ordersList.innerHTML = '<div class="no-orders"><p>No hay pedidos para mostrar</p></div>';
             return;
         }
         
+        // Genera el HTML para cada pedido
         ordersList.innerHTML = orders.map(order => this.createOrderHTML(order)).join('');
         
         // Add delete event listeners
@@ -268,13 +283,20 @@ class ShopperApp {
     }
 
     createOrderHTML(order) {
+        // Asegurarse de que order.createdAt sea un objeto Date válido
+        let displayDate = order.createdAt;
+        if (!(displayDate instanceof Date) || isNaN(displayDate.getTime())) {
+            // Fallback si la fecha no es válida, aunque getLocalDateFromISO debería evitarlo
+            displayDate = new Date(); // Usa la fecha actual como fallback
+        }
+
         const tariffName = order.tariffType === 'tariff1' ? this.settings.tariff1Name : this.settings.tariff2Name;
         
         return `
             <div class="order-item" data-order-id="${order.id}">
                 <div class="order-header">
                     <div class="order-name">${order.name}</div>
-                    <div class="order-date">${this.formatDate(order.createdAt)}</div>
+                    <div class="order-date">${this.formatDate(displayDate)}</div>
                 </div>
                 <div class="order-details">
                     <div class="detail-item">
@@ -291,7 +313,7 @@ class ShopperApp {
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Hora</span>
-                        <span class="detail-value">${this.formatTime(order.createdAt)}</span>
+                        <span class="detail-value">${this.formatTime(displayDate)}</span>
                     </div>
                 </div>
                 <div class="order-earnings">
@@ -305,16 +327,24 @@ class ShopperApp {
     }
 
     filterOrders(searchTerm) {
-        if (!searchTerm.trim()) {
-            this.filteredOrders = [];
-            this.displayOrders();
+        const searchInput = document.getElementById('searchInput');
+        const term = searchTerm.toLowerCase().trim(); // Usa trim() para eliminar espacios en blanco
+        
+        if (!term) {
+            this.filteredOrders = []; // Vacía los filtros si la búsqueda está vacía
+            this.displayOrders(); // Muestra todos los pedidos
             return;
         }
         
-        const term = searchTerm.toLowerCase();
         this.filteredOrders = this.orders.filter(order => {
+            // Asegura que order.createdAt sea un objeto Date válido antes de formatear para la búsqueda
+            let orderDateForSearch = order.createdAt;
+            if (!(orderDateForSearch instanceof Date) || isNaN(orderDateForSearch.getTime())) {
+                orderDateForSearch = new Date(); // Fallback para la búsqueda
+            }
+
             return order.name.toLowerCase().includes(term) ||
-                   this.formatDate(order.createdAt).toLowerCase().includes(term);
+                   this.formatDate(orderDateForSearch).toLowerCase().includes(term);
         });
         
         this.displayOrders(this.filteredOrders);
@@ -774,5 +804,6 @@ class ShopperApp {
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new ShopperApp();
+    // Haz que la instancia de ShopperApp sea global para facilitar la depuración
+    window.shopperApp = new ShopperApp(); 
 });
