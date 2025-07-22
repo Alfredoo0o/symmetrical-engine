@@ -17,7 +17,7 @@ class ShopperApp {
         this.initializeTabs();
         this.loadUserData();
         this.updateEarningsPreview();
-        this.initializeSummaryTab();
+        this.initializeSummaryTab(); // Asegurarse de que el resumen se inicialice al cargar la app
     }
 
     getDefaultSettings() {
@@ -109,7 +109,7 @@ class ShopperApp {
             tariffType: document.getElementById('tariffSelect').value,
             skuCount: parseInt(document.getElementById('skuCount').value) || 0,
             kilometers: parseFloat(document.getElementById('kilometers').value) || 0,
-            createdAt: new Date(),
+            createdAt: new Date().toISOString(), // Guarda la fecha como string ISO UTC
             userId: this.currentUser.id
         };
         
@@ -208,7 +208,8 @@ class ShopperApp {
             if (ordersData) {
                 this.orders = JSON.parse(ordersData).map(order => ({
                     ...order,
-                    createdAt: new Date(order.createdAt)
+                    // MODIFICADO: Utiliza getLocalDateFromISO para asegurar la consistencia de la fecha
+                    createdAt: this.getLocalDateFromISO(order.createdAt) 
                 }));
             }
             
@@ -229,11 +230,8 @@ class ShopperApp {
 
     saveOrdersToStorage() {
         try {
-            const ordersToSave = this.orders.map(order => ({
-                ...order,
-                createdAt: order.createdAt.toISOString()
-            }));
-            localStorage.setItem(`shopperApp_orders_${this.currentUser.id}`, JSON.stringify(ordersToSave));
+            // Las fechas ya están guardadas como ISO string en saveOrder, no es necesario hacer toISOString aquí.
+            localStorage.setItem(`shopperApp_orders_${this.currentUser.id}`, JSON.stringify(this.orders));
         } catch (error) {
             console.error('Error saving orders:', error);
             this.showToast('Error al guardar los pedidos', 'error');
@@ -361,7 +359,7 @@ class ShopperApp {
             tariff2Name: document.getElementById('tariff2Name').value.trim(),
             tariff2Value: parseFloat(document.getElementById('tariff2Value').value.replace(/\./g, '')) || 0,
             skuValue: parseFloat(document.getElementById('skuValue').value.replace(/\./g, '')) || 0,
-             kmValue: parseFloat(document.getElementById('kmValue').value.replace(/\./g, '')) || 0
+            kmValue: parseFloat(document.getElementById('kmValue').value.replace(/\./g, '')) || 0
         };
         
         // Validation
@@ -473,13 +471,15 @@ class ShopperApp {
     }
 
     getWeekOrders() {
-        const weekEnd = new Date(this.currentWeekStart);
-        weekEnd.setDate(weekEnd.getDate() + 6);
-        weekEnd.setHours(23, 59, 59, 999);
-        
+        // currentWeekStart ya está normalizado a 00:00:00
+        const normalizedWeekEnd = new Date(this.currentWeekStart);
+        normalizedWeekEnd.setDate(normalizedWeekEnd.getDate() + 6);
+        normalizedWeekEnd.setHours(0, 0, 0, 0); // Normaliza el fin de semana al inicio de su día también
+
         return this.orders.filter(order => {
-            const orderDate = new Date(order.createdAt);
-            return orderDate >= this.currentWeekStart && orderDate <= weekEnd;
+            // Normaliza la fecha del pedido al inicio de su día local para una comparación consistente
+            const orderDateNormalized = this.normalizeDateToDayStart(order.createdAt); 
+            return orderDateNormalized >= this.currentWeekStart && orderDateNormalized <= normalizedWeekEnd;
         });
     }
 
@@ -490,10 +490,11 @@ class ShopperApp {
         for (let i = 0; i < 7; i++) {
             const currentDay = new Date(this.currentWeekStart);
             currentDay.setDate(currentDay.getDate() + i);
+            currentDay.setHours(0,0,0,0); // Asegura que currentDay también esté normalizado al inicio del día
             
             const dayOrders = weekOrders.filter(order => {
-                const orderDate = new Date(order.createdAt);
-                return orderDate.toDateString() === currentDay.toDateString();
+                const orderDate = this.normalizeDateToDayStart(order.createdAt); // Normaliza para la comparación
+                return this.isSameDay(orderDate, currentDay); // Usa la función isSameDay
             });
             
             const totalEarnings = dayOrders.reduce((sum, order) => sum + order.earnings, 0);
@@ -608,7 +609,7 @@ class ShopperApp {
         const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
         
         const monthOrders = this.orders.filter(order => {
-            const orderDate = new Date(order.createdAt);
+            const orderDate = this.normalizeDateToDayStart(order.createdAt); // Normaliza para la comparación
             return orderDate >= currentMonth && orderDate < nextMonth;
         });
         
@@ -617,7 +618,7 @@ class ShopperApp {
         // Calculate working days in month
         const workingDays = new Set();
         monthOrders.forEach(order => {
-            const dateKey = new Date(order.createdAt).toDateString();
+            const dateKey = this.normalizeDateToDayStart(order.createdAt).toDateString(); // Normaliza para la clave del día
             workingDays.add(dateKey);
         });
         
@@ -631,6 +632,30 @@ class ShopperApp {
     }
 
     // Utility Functions
+    // MODIFICADO: Nueva función para normalizar fechas al inicio del día
+    normalizeDateToDayStart(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0); // Establece la hora a 00:00:00.000
+        return d;
+    }
+
+    // MODIFICADO: Nueva función para obtener un objeto Date local con la hora en 00:00:00
+    getLocalDateFromISO(isoString) {
+        const date = new Date(isoString);
+        // Crea un nuevo objeto Date usando el año, mes y día de la fecha local
+        // Esto asegura que la fecha represente el inicio del día local
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    // MODIFICADO: Helper function to check if two dates are the same day (using normalized dates)
+    isSameDay(d1, d2) {
+        const normalizedD1 = this.normalizeDateToDayStart(d1);
+        const normalizedD2 = this.normalizeDateToDayStart(d2);
+        return normalizedD1.getFullYear() === normalizedD2.getFullYear() &&
+               normalizedD1.getMonth() === normalizedD2.getMonth() &&
+               normalizedD1.getDate() === normalizedD2.getDate();
+    }
+    
     getWeekKey(date) {
         const weekStart = this.getWeekStart(date);
         return `${weekStart.getFullYear()}-${weekStart.getMonth()}-${weekStart.getDate()}`;
@@ -640,13 +665,16 @@ class ShopperApp {
         const d = new Date(date);
         const day = d.getDay();
         const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday
-        return new Date(d.setDate(diff));
+        const weekStartDate = new Date(d.setDate(diff));
+        weekStartDate.setHours(0,0,0,0); // Normalizar el inicio de semana
+        return weekStartDate;
     }
 
     getWeekEnd(date) {
         const weekStart = this.getWeekStart(date);
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999); // Establecer el fin del día para el fin de semana
         return weekEnd;
     }
 
@@ -688,13 +716,6 @@ class ShopperApp {
             button.disabled = false;
             spinner.style.display = 'none';
             text.style.opacity = '1';
-
-            // Nueva función para normalizar fechas al inicio del día
-normalizeDateToDayStart(date) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0); // Establece la hora a 00:00:00.000
-    return d;
-}
         }
     }
 
